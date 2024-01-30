@@ -4,7 +4,7 @@
 
 This repository is the official implementation of [DeTiME: Diffusion-Enhanced Topic Modeling using Encoder-decoder based LLM](https://aclanthology.org/2023.findings-emnlp.606.pdf). 
 
-vONTSS is a topic modeling method.
+DeTiME can generate embeddings, do diffusion and 
 
 
 ## Installation
@@ -34,6 +34,10 @@ Then you just have to run
 python3 main.py --data_source xwjzds/ag_news --metric diversity --topk 20
 ```
 It will output the diversity metric using data in xwjzds/ag_news 
+
+## Embedding Explain
+
+## Diffusion Explain
 
 
 ## Interactive Code
