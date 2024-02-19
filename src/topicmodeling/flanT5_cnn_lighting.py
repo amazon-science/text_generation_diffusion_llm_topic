@@ -41,7 +41,7 @@ from peft import get_peft_config, get_peft_model, get_peft_model_state_dict, Pre
 
 from tqdm import tqdm
 
-from CNN_Encoder import CNNEncoder, CNNDecoder, RNNEncoder
+from topicmodeling.CNN_Encoder import CNNEncoder, CNNDecoder, RNNEncoder
 
 from torch.utils.data import DataLoader
 import lightning as L
