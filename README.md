@@ -39,6 +39,65 @@ It will output the diversity metric using data in xwjzds/ag_news
 
 ## Diffusion Explain
 
+After getting the embedding using the encoders of DeTiME, the diffusion can be leveraged to denoise the embeddings. The denoised embeddings can be passed to the decoders of the DeTiME to generate text. 
+
+The training of diffusor involved two steps.
+
+Step 1: generate embedding of datasets using the encoders of the DeTiME. The code below shows how to generate embeddings
+
+```python
+outputs = []
+
+text_ls = dataset['summary']
+
+batch_size = 2
+
+batch_ls = [text_ls[ind: ind + batch_size]for ind in range(0, len(text_ls), batch_size)]
+
+print(dataset)
+
+for text in tqdm(batch_ls):
+
+    # inputs = tokenizer(text, return_tensors="pt").input_ids
+    # attention = tokenizer(text, return_tensors="pt").attention_mask
+
+    # add instruction
+    # text = ['repeat: ' + t for t in text]
+
+    inputs = tokenizer(text, return_tensors="pt", padding='max_length', truncation=True, max_length = args.max_length)
+    
+    # get the inputs and attention
+    inputs_id = inputs.input_ids.to(models.device)
+    attention = inputs.attention_mask.to(models.device)
+    
+    output = models.model.encoder(inputs_id, attention).last_hidden_state   #batch size * seq length * embedding size, 
+    output = models.encoder(output)
+    outputs.append(output.detach().cpu())
+    
+    gc.collect()
+```
+
+Step 2: train a diffusor using the embeddings. To train a diffusor, the users can leverage 
+python diffuser_training.py --embedding_input './example/embed_vectors_base_7_1000_prefix.pt' --model_name 'UNet_Conv' --output_dir './example'. Here. embedding_input is the embedding file location, model_name is the diffusor model name to train, output_dir is the location where the trained diffusor saved.
+
+To generate the text using the deniosed embedding, three steps are involved.
+
+Step 1: generate embedding of datasets using the encoders of the DeTiME.
+
+Step 2: denoise the embeddings using the generated embeddings.
+```python
+from diffusion.diffusion_generate import generate_diffused_embed, generate_text
+# generate from the noise vector
+sampling_turn = 2
+timesteps = 1000
+
+x_noise = torch.randn((num_images, 4, latent_dim // 4), device=device)
+x_track_ls_ls_noise, x_0_track_ls_ls_noise = generate_diffused_embed(x_noise, model, timesteps, device, batch_size=2, 
+                            num_generated_sample=2, return_all_time_embed=True)
+```
+
+Step 3: generate text from the denoised embeddings.
+
 
 ## Interactive Code
 
