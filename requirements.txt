@@ -6,6 +6,6 @@ gensim==4.3.1
 torchvision==0.2.1
 octis==1.13.1
 cudatoolkit==10.1
-nltk==3.9
+nltk==3.9.3
 huggingface-hub==0.16.4
 gensim==4.2.0
